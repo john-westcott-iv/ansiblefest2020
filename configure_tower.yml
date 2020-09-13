@@ -1,8 +1,30 @@
 ---
 - name: Run Tower Configuration
   hosts: localhost
-  connection: local
   gather_facts: False
+  vars:
+    organizations:
+      - "Org 1"
+      - "Org 2"
+  collections:
+    - awx.awx
+
   tasks:
-    - debug:
-        msg: "Configuring Tower"
+    - name: Create Organizations
+      tower_organization:
+        name: "{{ item }}"
+      loop: "{{ organizations }}"
+
+    - name: Create Foo Projects
+      tower_project:
+        name: "Foo"
+        organization: "{{ item }}"
+        scm_type: 'git'
+        scm_url: 'https://github.com/john-westcott-iv/ansiblefest2020'
+        scm_update_on_launch: true
+      loop: "{{ organizations }}"
+
+    - name: Configue Tower Settings
+      tower_settings:
+        settings: "{{ lookup('file', 'files/custom_settings.json') | from_json() }}"
+
