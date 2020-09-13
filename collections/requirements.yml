@@ -1,1 +1,2 @@
-- name: awx.awx
+collections:
+  - awx.awx
