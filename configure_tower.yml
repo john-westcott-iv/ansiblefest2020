@@ -1,0 +1,8 @@
+---
+- name: Run Tower Configuration
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - debug:
+        msg: "Configuring Tower"

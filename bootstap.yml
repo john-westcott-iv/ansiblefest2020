@@ -1,0 +1,56 @@
+---
+- name: Bootstrap My Tower Instance
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  collections:
+    - awx.awx
+  environment:
+    TOWER_HOST: https://10.0.1.73/
+    TOWER_USERNAME: admin
+    TOWER_PASSWORD: admin
+
+  tasks:
+    - name: Set my login message
+      tower_organization:
+        name: "Tower Bootstap"
+
+    - name: Create a project
+      tower_project:
+        name: "Bootstap Project"
+        organization: "Tower Bootstap"
+        scm_type: 'git'
+        scm_url: 'https://github.com/john-westcott-iv/ansiblefest2020'
+        scm_update_on_launch: true
+
+    - name: Create an empty inventory
+      tower_inventory:
+        name: "Tower Inventory"
+        organization: "Tower Bootstrap"
+
+    - name: Add our Tower host to the inventory
+      tower_host:
+        name: "localhost"
+        inventory: "Tower Inventory"
+        variables:
+          ansible_connection: local
+
+    - name: Create an Ansible Tower credential
+      tower_credential:
+        name: "My Tower Credential"
+        organization: "Tower Bootstrap"
+        credential_type: "Ansible Tower"
+        inputs:
+          host: "https://10.0.1.73"
+          password: "admin"
+          username: "admin"
+
+    - name: Create a job template
+      tower_job_template:
+        name: "Bootstrap Tower"
+        project: "Bootstrap Project"
+        inventory: "Tower Inventory"
+        playbook: "configure_tower.yml"
+        job_type: "run"
+        credentials:
+          - "My Tower Credential"
