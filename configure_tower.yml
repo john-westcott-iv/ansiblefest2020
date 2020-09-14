@@ -8,6 +8,11 @@
       - "Org 2"
   collections:
     - awx.awx
+  environment:
+    TOWER_HOST: https://10.0.1.73/
+    TOWER_USERNAME: admin
+    TOWER_PASSWORD: admin
+    TOWER_VERIFY_SSL: False
 
   tasks:
     - name: Create Organizations
@@ -28,3 +33,31 @@
       tower_settings:
         settings: "{{ lookup('file', 'files/custom_settings.json') | from_json() }}"
 
+    - name: Create a snafu user
+      tower_user:
+        username: "snafu"
+        first_name: "sna"
+        last_name: "fu"
+        email: "snafu@example.org"
+        password: "snafoo123!"
+
+    - name: "Add snafu user to {{ organizations[0] }}"
+      tower_role:
+        user: "snafu"
+        role: "member"
+        organization: "{{ organizations[0] }}"
+
+    - name: Add org1admin user
+      tower_user:
+        username: "org1admin"
+        first_name: "org1"
+        last_name: "admin"
+        email: "admin@org1.example.org"
+        password: "org1admin"
+
+    - name: "Make org1admin an admin of {{ organizations[0] }}"
+      tower_role:
+        user: "org1admin"
+        role: "admin"
+        organization: "{{ organizations[0] }}"
+      

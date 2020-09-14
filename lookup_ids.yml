@@ -1,0 +1,22 @@
+---
+- name: Lookup the org id
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  collections:
+    - awx.awx
+
+  tasks:
+    - name: Get the ID or Org 2
+      set_fact:
+        org2id: "{{ lookup('awx.awx.tower_api', 'organizations', query_params={'name': 'Org 2'}, expect_one=True, return_ids=True) }}"
+
+    - debug:
+        msg: "Org 2 ID is {{ org2id }}"
+
+    - name: Get the ID of the Foo project in Org 2
+      set_fact:
+        foo_id: "{{ lookup('awx.awx.tower_api', 'projects', query_params={'name': 'Foo', 'organization': org2id} , expect_one=True, return_ids=True) }}"
+
+    - debug:
+        msg: "ID is {{ foo_id }}"

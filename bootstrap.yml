@@ -57,3 +57,12 @@
         job_type: "run"
         credentials:
           - "My Tower Credential"
+
+    - name: Launch bootstrap job
+      tower_job_launch:
+        name: "Bootstrap Tower"
+        wait: True
+      register: job_launch_results
+
+    - debug:
+        msg: "{{ job_launch_results }}"
