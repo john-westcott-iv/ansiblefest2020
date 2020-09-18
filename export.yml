@@ -31,4 +31,4 @@
       set_stats:
         data:
           job_templates: "{{ job_templates | default({}) }}"
-          rurvey_specs: "{{ survey_specs | default({}) }}"
+          survey_specs: "{{ survey_specs | default({}) }}"
