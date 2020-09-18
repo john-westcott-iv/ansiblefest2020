@@ -30,5 +30,5 @@
     - name: Export our data for the import process
       set_stats:
         data:
-          job_templates: "{{ job_templates }}"
-          survey_specs: "{{ survey_specs }}"
+          job_templates: "{{ job_templates | default({}) }}"
+          rurvey_specs: "{{ survey_specs | default({}) }}"
