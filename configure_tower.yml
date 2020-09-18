@@ -56,3 +56,102 @@
         role: "admin"
         organization: "{{ organizations[0] }}"
       
+    - name: Create Export Org
+      tower_organization:
+        name: "Export Org"
+
+    - name: Create Export project
+      tower_project:
+        name: "Export Project"
+        organization: "Export Org"
+        scm_type: 'git'
+        scm_url: 'https://github.com/john-westcott-iv/ansiblefest2020'
+        scm_update_on_launch: false
+
+    - name: Create Tower Project
+      tower_project:
+        name: "{{ item }}"
+        organization: "Export Org"
+        scm_type: 'git'
+        scm_url: 'https://github.com/john-westcott-iv/ansiblefest2020-awx-lab.git'
+        scm_update_on_launch: true
+        scm_branch: "{{ item | lower }}"
+      loop:
+        - "Production"
+        - "Development"
+
+    - name: Create Export Job
+      tower_job_template:
+        name: "Export Assets"
+        project: "Export Project"
+        inventory: "Tower Inventory"
+        playbook: "export.yml"
+        job_type: "run"
+        credentials:
+          - "My Tower Credential"
+      register: export_job
+
+    - name: Create Import Job
+      tower_job_template:
+        name: "Import Assets"
+        project: "Export Project"
+        inventory: "Tower Inventory"
+        playbook: "import.yml"
+        job_type: "run"
+        credentials:
+          - "My Tower Credential"
+      register: import_job
+
+    - name: Create Export/Import Workflow
+      tower_workflow_job_template:
+        name: "Migrate Job Templates"
+        organization: "Export Org"
+
+    - name: Add import Node
+      tower_workflow_job_template_node:
+        workflow_job_template: "Migrate Job Templates"
+        organization: "Export Org"
+        unified_job_template: "{{ import_job.id }}"
+        identifier: "import_node"
+
+    - name: Add import Node
+      tower_workflow_job_template_node:
+        workflow_job_template: "Migrate Job Templates"
+        organization: "Export Org"
+        unified_job_template: "{{ export_job.id }}"
+        success_nodes: "import_node"
+        identifier: "export_node"
+
+    - name: Create a dummy job
+      tower_job_template:
+        name: "The Job"
+        project: "Development"
+        inventory: "Tower Inventory"
+        playbook: "demo.yml"
+        job_type: "run"
+
+    - name: Create a developer user
+      tower_user:
+        username: "dev"
+        first_name: "Jane"
+        last_name: "Developer"
+        password: "dev123!"
+
+    - name: Create an operations user
+      tower_user:
+        username: "ops"
+        first_name: "Joe"
+        last_name: "Operator"
+        password: "ops123!"
+
+    - name: Give developer modify perms on Demo Job template
+      tower_role:
+        user: "dev"
+        role: "admin"
+        job_template: "The Job"
+
+    - name: Give developer execute perms on Migrate Job Templates
+      tower_role:
+        user: "dev"
+        role: "execute"
+        workflow: "Migrate Job Templates"
