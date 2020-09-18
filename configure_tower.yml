@@ -85,7 +85,7 @@
         - short: Prod
           long: Production
       loop_control:
-        loop_label: "{{ item.short }}"
+        label: "{{ item.short }}"
 
     - name: Create Tower Credentials for Org Admins
       tower_credential:
@@ -94,15 +94,15 @@
         credential_type: "Ansible Tower"
         inputs:
           host: "https://10.0.1.73"
-          password: "{{ item.short }}OrgAdmin"
-          username: "admin"
+          password: "{{ item.short }}OrgAdmin123!"
+          username: "{{ item.short }}OrgAdmin"
       loop:
         - short: Dev
           long: Development
         - short: Prod
           long: Production
       loop_control:
-        loop_label: "{{ item.short }}"
+        label: "{{ item.short }}"
 
     - name: Create Export project
       tower_project:
