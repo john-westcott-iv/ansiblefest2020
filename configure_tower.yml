@@ -58,7 +58,51 @@
       
     - name: Create Export Org
       tower_organization:
-        name: "Export Org"
+        name: "{{ item }}"
+      loop:
+        - "Export Org"
+        - "Production"
+        - "Development"
+
+    - name: Create org admins
+      tower_user:
+        username: "{{ item }}OrgAdmin"
+        first_name: "{{ item }}"
+        last_name: "OA"
+        password: "{{ item }}OrgAdmin123!"
+      loop:
+        - "Dev"
+        - "Prod"
+
+    - name: Assing org admins to org admin role
+      tower_role:
+        user: "{{ item.short }}OrgAdmin"
+        organization: "{{ item.long }}"
+        role: "admin"
+      loop:
+        - short: Dev
+          long: Development
+        - short: Prod
+          long: Production
+      loop_control:
+        loop_label: "{{ item.short }}"
+
+    - name: Create Tower Credentials for Org Admins
+      tower_credential:
+        name: "{{ item.short }} Admin Tower Credential"
+        organization: "{{ item.long }}"
+        credential_type: "Ansible Tower"
+        inputs:
+          host: "https://10.0.1.73"
+          password: "{{ item.short }}OrgAdmin"
+          username: "admin"
+      loop:
+        - short: Dev
+          long: Development
+        - short: Prod
+          long: Production
+      loop_control:
+        loop_label: "{{ item.short }}"
 
     - name: Create Export project
       tower_project:
@@ -71,7 +115,7 @@
     - name: Create Tower Project
       tower_project:
         name: "{{ item }}"
-        organization: "Export Org"
+        organization: "{{ item }}"
         scm_type: 'git'
         scm_url: 'https://github.com/john-westcott-iv/ansiblefest2020-awx-lab.git'
         scm_update_on_launch: true
@@ -88,7 +132,7 @@
         playbook: "export.yml"
         job_type: "run"
         credentials:
-          - "My Tower Credential"
+          - "Dev Admin Tower Credential"
       register: export_job
 
     - name: Create Import Job
@@ -99,7 +143,7 @@
         playbook: "import.yml"
         job_type: "run"
         credentials:
-          - "My Tower Credential"
+          - "Prod Admin Tower Credential"
       register: import_job
 
     - name: Create Export/Import Workflow
