@@ -7,7 +7,17 @@
     - awx.awx
 
   tasks:
-    - name: "Import Job Templates Into Production"
+    - name: Extract credential info for jobs
+      set_fact:
+        job_credentials: "{{ job_credentials | default({}) | combine({ item.name: credential_ids }) }}"
+      loop: "{{ job_templates }}"
+      vars:
+        credential_ids: "{{ item.summary_fields.credentials | json_query('[*].id') }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: credential_ids | length > 0
+
+    - name: Import Job Templates Into Production
       tower_job_template:
         name: "{{ item.name | default(omit) }}"
         description: "{{ item.description | default(omit) }}"
@@ -15,7 +25,7 @@
         inventory: "{{ item.inventory | default(omit) }}"
         project: "Production"
         playbook: "{{ item.playbook | default(omit) }}"
-        credentials: "{{ credential_ids | default(omit) }}"
+        credentials: "{{ job_credentials[ item.name ] | default(omit) }}"
         forks: "{{ item.forks | default(omit) }}"
         limit: "{{ item.limit | default(omit) }}"
         verbosity: "{{ item.verbosity | default(omit) }}"
@@ -49,8 +59,6 @@
         scm_branch: "{{ item.scm_branch | default(omit) }}"
         labels: "{{ item.labels | default(omit) }}"
       loop: "{{ job_templates }}"
-      vars:
-        credential_ids: "{{ item.summary_fields.credentials | json_query('[*].id') }}"
       loop_control:
         label: "{{ item.name }}"
 
