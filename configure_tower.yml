@@ -202,3 +202,18 @@
         user: "dev"
         role: "execute"
         workflow: "Migrate Job Templates"
+
+    - name: Give users use access to the Tower Inventory
+      tower_role:
+        user: "{{ item }}"
+        inventory: "Tower Inventory"
+        role: "use"
+      loop:
+        - "dev"
+        - "ProdOrgAdmin"
+
+    - name: Give the developer use access to the Development project
+      tower_role:
+        user: "dev"
+        project: "Development"
+        role: "use"
