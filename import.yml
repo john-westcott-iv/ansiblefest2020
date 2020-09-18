@@ -19,7 +19,7 @@
         forks: "{{ item.forks | default(omit) }}"
         limit: "{{ item.limit | default(omit) }}"
         verbosity: "{{ item.verbosity | default(omit) }}"
-        extra_vars: "{{ item.extra_vars | to_json() | default({}) | combine({ 'environment': 'prod' }) }}"
+        extra_vars: "{{ (item.extra_vars == '') | ternary({}, item.extra_vars | to_json()) | combine({ 'environment': 'prod' }) }}"
         job_tags: "{{ item.job_tags | default(omit) }}"
         force_handlers: "{{ item.force_handlers | default(omit) }}"
         skip_tags: "{{ item.skip_tags | default(omit) }}"
