@@ -25,7 +25,7 @@
         inventory: "{{ item.inventory | default(omit) }}"
         project: "Production"
         playbook: "{{ item.playbook | default(omit) }}"
-        credentials: "{{ job_credentials[ item.name ] | default(omit) }}"
+#        credentials: "{{ job_credentials[ item.name ] | default(omit) }}"
         forks: "{{ item.forks | default(omit) }}"
         limit: "{{ item.limit | default(omit) }}"
         verbosity: "{{ item.verbosity | default(omit) }}"
