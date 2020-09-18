@@ -53,3 +53,12 @@
         credential_ids: "{{ item.summary_fields.credentials | json_query('[*].id') }}"
       loop_control:
         label: "{{ item.name }}"
+
+    - name: Give ops user permissions to execute our job
+      tower_role:
+        user: ops
+        role: execute
+        job_template: "{{ item.name }}"
+      loop: "{{ job_templates }}"
+      loop_control:
+        label: "{{ item.name }}"
