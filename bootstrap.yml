@@ -5,11 +5,6 @@
   gather_facts: False
   collections:
     - awx.awx
-  environment:
-    TOWER_HOST: https://10.0.1.73/
-    TOWER_USERNAME: admin
-    TOWER_PASSWORD: admin
-    TOWER_VERIFY_SSL: False
   vars:
     org_name: "Tower Bootstrap"
 
