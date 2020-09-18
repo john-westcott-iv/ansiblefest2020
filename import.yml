@@ -55,7 +55,7 @@
         custom_virtualenv: "{{ item.custom_virtualenv | default(omit) }}"
         job_slice_count: "{{ item.job_slice_count | default(omit) }}"
         webhook_service: "{{ item.webhook_service | default(omit) }}"
-        webhook_credential: "{{ item.webhook_credential if item.webhook_credential and item.webhook_credential != '' else default(omit) }}"
+        webhook_credential: "{{ item.webhook_credential default(omit, true) }}"
         scm_branch: "{{ item.scm_branch | default(omit) }}"
         labels: "{{ item.labels | default(omit) }}"
       loop: "{{ job_templates }}"
