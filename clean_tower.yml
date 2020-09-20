@@ -1,0 +1,7 @@
+---
+- name: Remove lab assets
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - name: 

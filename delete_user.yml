@@ -1,0 +1,9 @@
+---
+- name: Delete the ops user
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - tower_user:
+        username: ops
+        state: absent
