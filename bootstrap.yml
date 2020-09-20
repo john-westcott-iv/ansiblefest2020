@@ -39,9 +39,9 @@
         organization: "{{ org_name }}"
         credential_type: "Ansible Tower"
         inputs:
-          host: "https://10.0.1.73"
-          password: "admin"
-          username: "admin"
+          host: "{{ lookup('env', 'TOWER_HOST') }}"
+          password: "{{ lookup('env', 'TOWER_PASSWORD') }}"
+          username: "{{ lookup('env', 'TOWER_USERNAME') }}"
 
     - name: Create a job template
       tower_job_template:
