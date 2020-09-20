@@ -94,7 +94,7 @@
         organization: "{{ item.long }}"
         credential_type: "Ansible Tower"
         inputs:
-          host: "https://10.0.1.73"
+          host: "{{ lookup('env', 'TOWER_HOST') }}"
           password: "{{ item.short }}OrgAdmin123!"
           username: "{{ item.short }}OrgAdmin"
       loop:
