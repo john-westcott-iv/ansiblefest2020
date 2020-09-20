@@ -173,9 +173,11 @@
       tower_job_template:
         name: "The Job"
         project: "Development"
+        organization: "Development"
         inventory: "Tower Inventory"
         playbook: "demo.yml"
         job_type: "run"
+      register: the_job
 
     - name: Create a developer user
       tower_user:
@@ -195,7 +197,7 @@
       tower_role:
         user: "dev"
         role: "admin"
-        job_template: "The Job"
+        job_template: "{{ the_job.id }}"
 
     - name: Give developer execute perms on Migrate Job Templates
       tower_role:
