@@ -157,14 +157,14 @@
       tower_workflow_job_template_node:
         workflow_job_template: "Migrate Job Templates"
         organization: "Export Org"
-        unified_job_template: "{{ import_job.id }}"
+        unified_job_template: "Import Assets"
         identifier: "import_node"
 
     - name: Add import Node
       tower_workflow_job_template_node:
         workflow_job_template: "Migrate Job Templates"
         organization: "Export Org"
-        unified_job_template: "{{ export_job.id }}"
+        unified_job_template: "Export Assets"
         success_nodes: "import_node"
         identifier: "export_node"
 
