@@ -3,7 +3,18 @@
   hosts: localhost
   connection: local
   gather_facts: False
+  collections:
+    - awx.awx
+
   tasks:
+    - name: Remove workflow job templates
+      tower_workflow_job_template:
+        state: absent
+        name: "{{ item.id }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'workflow_job_templates', return_all=True, wantlist=True) }}"
+      loop_control:
+        label: "{{ item.name }}"
+
     - name: Remove job templates
       tower_job_template:
         state: absent
