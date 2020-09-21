@@ -120,7 +120,6 @@
         organization: "{{ item }}"
         scm_type: 'git'
         scm_url: 'https://github.com/john-westcott-iv/ansiblefest2020-awx-lab.git'
-        scm_branch: devel
         scm_update_on_launch: true
         scm_branch: "{{ item | lower }}"
       loop:
