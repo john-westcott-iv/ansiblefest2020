@@ -4,4 +4,53 @@
   connection: local
   gather_facts: False
   tasks:
-    - name: 
+    - name: Remove job templates
+      tower_job_template:
+        state: absent
+        name: "{{ item.id }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'job_templates', return_all=True, wantlist=True) }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Remove projects
+      tower_project:
+        state: absent
+        name: "{{ item.id }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'projects', return_all=True, wantlist=True) }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Remove Inventories
+      tower_inventory:
+        state: absent
+        name: "{{ item.id }}"
+        organization: "{{ item.organization }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'inventories', return_all=True, wantlist=True) }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Remove Credentials
+      tower_credential:
+        state: absent
+        name: "{{ item.id }}"
+        credential_type: "{{ item.credential_type }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'credentials', return_all=True, wantlist=True) }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Remove Organizations
+      tower_organization:
+        state: absent
+        name: "{{ item.id }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'organizations', return_all=True, wantlist=True) }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Remove Users
+      tower_user:
+        state: absent
+        username: "{{ item.id }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'users', return_all=True, wantlist=True) }}"
+      loop_control:
+        label: "{{ item.username }}"
+      when: "item.username != 'admin'"
