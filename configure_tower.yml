@@ -158,6 +158,8 @@
         workflow_job_template: "Migrate Job Templates"
         organization: "Export Org"
         unified_job_template: "Import Assets"
+        # When the new collection is out IDs will be safer
+        # unified_job_template: "{{ import_job.id }}"
         identifier: "import_node"
 
     - name: Add import Node
@@ -165,6 +167,8 @@
         workflow_job_template: "Migrate Job Templates"
         organization: "Export Org"
         unified_job_template: "Export Assets"
+        # When the new collection is out IDs will be safer
+        # unified_job_template: "{{ export_job.id }}"
         success_nodes: "import_node"
         identifier: "export_node"
 
@@ -196,7 +200,9 @@
       tower_role:
         user: "dev"
         role: "admin"
-        job_template: "{{ the_job.id }}"
+        job_template: "The Job"
+        # When the new collection is out IDs will make this idempotent after latesr sections are completed
+        # job_template: "{{ the_job.id }}"
 
     - name: Give developer execute perms on Migrate Job Templates
       tower_role:
