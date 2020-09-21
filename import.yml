@@ -4,7 +4,7 @@
   connection: local
   gather_facts: False
   collections:
-    - awx.awx
+    - beeankha.awx
 
   tasks:
     - name: Extract credential info for jobs

@@ -4,7 +4,7 @@
   connection: local
   gather_facts: False
   collections:
-    - awx.awx
+    - beeankha.awx
   vars:
     org_name: "Tower Bootstrap"
 

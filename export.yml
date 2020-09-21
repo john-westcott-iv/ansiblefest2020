@@ -4,27 +4,27 @@
   connection: local
   gather_facts: False
   collections:
-    - awx.awx
+    - beeankha.awx
 
   tasks:
     - name: Get the ID of Development Project
       set_fact:
-        project_id: "{{ lookup('awx.awx.tower_api', 'projects', query={'name': 'Development'}, expect_one=True, return_ids=True) }}"
+        project_id: "{{ lookup('beeankha.awx.tower_api', 'projects', query={'name': 'Development'}, expect_one=True, return_ids=True) }}"
 
     - name: Find all job templates under the Development Project
       set_fact:
-        job_templates: "{{ lookup('awx.awx.tower_api', 'job_templates', query={'project': project_id}, wantlist=True) }}"
+        job_templates: "{{ lookup('beeankha.awx.tower_api', 'job_templates', query={'project': project_id}, wantlist=True) }}"
 
     - name: Loop thogugh job templates to get the survey specs
       set_fact:
         survey_specs: "{{ survey_specs | default({}) | combine({ item.id: survey_data['spec'] }) }}"
       #debug:
-      #  msg: "{{ lookup('awx.awx.tower_api', item.related.survey_spec) }}"
+      #  msg: "{{ lookup('beeankha.awx.tower_api', item.related.survey_spec) }}"
       loop: "{{ job_templates }}"
       loop_control:
         label: "{{ item.name }}"
       vars:
-        survey_data: "{{ lookup('awx.awx.tower_api', item.related.survey_spec) }}"
+        survey_data: "{{ lookup('beeankha.awx.tower_api', item.related.survey_spec) }}"
       when: "'spec' in survey_data"
 
     - name: Export our data for the import process
