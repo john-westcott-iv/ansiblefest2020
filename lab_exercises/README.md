@@ -6,39 +6,40 @@ The Ansible Tower modules in the AWX Collection repository enable Tower users to
 
 ## AWX Collections Lab Exercises
 
-[comment]: <> (TO DO: link to each Exercise!)
-### Exercise 1
+### [Exercise 1](lab_01.md)
 - Introduction to Your Lab Environment
 - Authenticate to Tower
 - Using `tower_setting` to Set a Welcome Message
 
-### Exercise 2
+### [Exercise 2](lab_02.md)
 - Configuring Tower
 - Bootstrap Tower
 - Ansible Tower Authentication
 - Running the Configuration Job
 
-### Exercise 3
+### [Exercise 3](lab_03.md)
 - Naming Conflicts
 
-### Exercise 4
+### [Exercise 4](lab_04.md)
 - Creating a Simple Migration Plan
 - Create GitHub Project
 - Clone and Create Assets
 - Tower Setup
 
-### Exercise 5
+### [Exercise 5](lab_05.md)
 - Collection Documentation
 
-### Exercise 6
+### [Exercise 6](lab_06.md)
 - Getting Help
 
-### Exercise 7
+### [Exercise 7](lab_07.md)
 - Tearing Down The Environment
 
 * * *
 
 ## Advanced AWX Collections Lab (Optional)
+
+This portion of the lab is for those who are finished early, or who would like to explore further possibilities of the AWX Collection after the allotted AnsibleFest lab time.
 
 ### Advanced Exercise 1
 - Downloading AWX
