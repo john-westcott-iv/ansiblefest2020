@@ -41,13 +41,13 @@ The Ansible Tower modules in the AWX Collection repository enable Tower users to
 
 This portion of the lab is for those who are finished early, or who would like to explore further possibilities of the AWX Collection after the allotted AnsibleFest lab time.
 
-### Advanced Exercise 1
+### [Advanced Exercise 1](lab_advanced_01.md)
 - Downloading AWX
 
-### Advanced Exercise 2
+### [Advanced Exercise 2](lab_advanced_02.md)
 - Building `devel` Version of Collection
 
-### Advanced Exercise 3
+### [Advanced Exercise 3](lab_advanced_03.md)
 - Collection Layout
 - Unit Tests
 - Integration Tests
@@ -55,5 +55,5 @@ This portion of the lab is for those who are finished early, or who would like t
 - Plugins
 - Tools
 
-### Advanced Exercise 4
+### [Advanced Exercise 4](lab_advanced_04.md)
 - Submitting an Enhancement
