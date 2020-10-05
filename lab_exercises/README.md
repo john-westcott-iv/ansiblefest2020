@@ -6,6 +6,7 @@ The Ansible Tower modules in the AWX Collection repository enable Tower users to
 
 ## AWX Collections Lab Exercises
 
+[comment]: <> (TO DO: link to each Exercise!)
 ### Exercise 1
 - Introduction to Your Lab Environment
 - Authenticate to Tower
