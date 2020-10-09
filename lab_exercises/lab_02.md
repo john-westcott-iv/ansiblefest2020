@@ -7,7 +7,7 @@ For the rest of this lab, we need to build some assets in your Ansible Tower env
 
 To start, we are going to write a playbook very similar to our first playbook. Create a new file and call it `bootstrap.yml`, then paste in the following content:
 
-```
+```yml
 ---
 - name: Bootstrap My Tower Instance For Corp Config
   hosts: localhost
@@ -89,7 +89,7 @@ TASK [Create a job template for the configuration script] **********************
 changed: [localhost]
 
 PLAY RECAP *****************************************************************************
-localhost                  : ok=6    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+localhost                  : ok=6    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
 We can see from the output that all of the assets in our Ansible Tower instance have been created (everything was changed). We will now log into the Ansible Tower web UI, where we can see everything that has been created for us. To start, log into Ansible Tower and go to Organizations and select the Corporate Tower Config organization:
@@ -124,7 +124,7 @@ Everything has been created just as we specified in our `bootstrap.yml` playbook
 
 ### Ansible Tower Authentication
 
-Before we run the “Configure Tower” job template, let’s look at the last system administrator wrote in the playbook by going to [https://github.com/john-westcott-iv/ansiblefest2020/blob/devel/configure_tower.yml](https://github.com/john-westcott-iv/ansiblefest2020/blob/devel/configure_tower.yml)
+Before we run the “Configure Tower” job template, let’s look at what the last system administrator wrote in the playbook by going to [https://github.com/john-westcott-iv/ansiblefest2020/blob/devel/configure_tower.yml](https://github.com/john-westcott-iv/ansiblefest2020/blob/devel/configure_tower.yml)
 
 This job template should feel familiar as it will do many things we have already done with the bootstrap playbook (create organizations, configure Ansible Tower settings, etc). However, when the job runs from Ansible Tower it will not have access to the command line environment variables that we set to run `ansible-playbook` with. So, how will the module be able to connect to Ansible Tower?
 
@@ -144,15 +144,15 @@ Notice the hostname, username, password and verify SSL options (just like we hav
 
 Since we have validated that the job template left by the last administrator is not breaking anything, let’s go ahead and modify our `bootstrap.yml` to include the execution of the job template. To do this we will add the following steps at the bottom of the `bootstrap.yml` playbook:
 
-```
-        - name: Launch configuration job
-          tower_job_launch:
-            name: "Configure Tower"
-            wait: True
-          register: job_launch_results
+```yml
+    - name: Launch configuration job
+      tower_job_launch:
+        name: "Configure Tower"
+        wait: True
+      register: job_launch_results
 
-        - debug:
-            msg: "{{ job_launch_results }}"
+    - debug:
+        msg: "{{ job_launch_results }}"
 ```
 
 This new task will launch our Bootstrap Tower job template and wait for it to complete. Running our playbook now yields:
@@ -209,3 +209,26 @@ Also notice that all of the steps reported `OK` showcasing idempotency with the 
 Just like the UI, the modules get some values from the API as `$encrypted$` (e.g., passwords). Due to these fields being encrypted, the modules cannot determine if the provided password will cause a change within Tower. Therefore the module makes the assumption that it did change the system and always returns True when it attempts to set the state of an `$encrypted$` field.
 
 You can now log into your corporately configured Ansible Tower UI and go to Jobs on the left hand menu and see that our job ran and that the returned ID from Ansible Tower matches the job ID within the database. Open this job and review the logs to see what it did. Once you read through the log, go through other screens within the Ansible Tower UI and see the many assets that have been created automatically since our last administrator configured Tower with Ansible and the collection.
+
+Also note: If you are using the `ansible.tower` collection, `wait: True` is not a valid module parameter. The `ansible.tower` collection has a separate module called `tower_job_wait` that we can use to wait for the launched job to complete. So instead of:
+
+```yml
+    - name: Launch configuration job
+      tower_job_launch:
+        name: "Configure Tower"
+        wait: True
+      register: job_launch_results
+```
+
+We would write following:
+
+```yml
+    - name: Launch configuration job
+      tower_job_launch:
+        name: "Configure Tower"
+      register: job_launch_results
+
+    - name: Wait for the configuration job to complete
+      tower_job_wait:
+        job_id: "{{ job_launch_results.id }}"
+```
