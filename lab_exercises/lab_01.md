@@ -85,19 +85,19 @@ Any files that you create here will be available in your home directory on the s
 Whatever method you choose (VSCode or direct terminal access), create a playbook file called `tower.yml` and populate it with the following content:
 
 ```
-    ---
-    - name: Customize My Tower Instance
-      hosts: localhost
-      connection: local
-      gather_facts: False
-      collections:
-        - awx.awx
+---
+- name: Customize My Tower Instance
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  collections:
+    - awx.awx
 
-      tasks:
-        - name: Set my login message
-          awx.awx.tower_settings:
-            name: "CUSTOM_LOGIN_INFO"
-            value: "This is my own Tower instance"
+  tasks:
+    - name: Set my login message
+      awx.awx.tower_settings:
+        name: "CUSTOM_LOGIN_INFO"
+        value: "This is my own Tower instance"
 ```
 
 Since this will be very similar on all of the playbooks we write, let’s quickly go over this playbook.
@@ -105,13 +105,13 @@ Since this will be very similar on all of the playbooks we write, let’s quickl
 First, we are giving the play a name with the directive:
 
 ```
-    - name: Customize My Tower Instance
+- name: Customize My Tower Instance
 ```
 
 Next, we are telling Ansible that we only need to connect to `localhost` for this play:
 
 ```
-      hosts: localhost
+  hosts: localhost
 ```
 
 The AWX Collection modules will use parameters to tell it how to connect to the Ansible Tower host to perform the configuration. Because of this, we don’t need to have Ansible SSH to a specific node for configuration.
@@ -119,8 +119,8 @@ The AWX Collection modules will use parameters to tell it how to connect to the 
 Next, we tell Ansible to connect with a local connection (instead of SSH) and to not gather facts:
 
 ```
-      connection: local
-      gather_facts: False
+  connection: local
+  gather_facts: False
 ```
 
 This is something you may or may not need to do for your environment and for the purpose of your playbook.
@@ -128,8 +128,8 @@ This is something you may or may not need to do for your environment and for the
 For the last header element, we are telling Ansible that we want to use the `awx.awx collection`:
 
 ```
-      collections:
-        - awx.awx
+  collections:
+    - awx.awx
 ```
 
 > **Note:** There are two collections `awx.awx` and `ansible.tower`. The `awx.awx ` is the upstream version of the collection intended for use with awx. Its source is embedded within the AWX source code. The `ansible.tower` collection is intended for use with Red Hat Ansible Tower. This collection is distributed via Content Hub and is officially supported by Red Hat. For this lab, we will use the `awx.awx` collection. In production you should use the `ansible.tower` collection. For the purposes of this lab the two collections are nearly identical.
@@ -146,7 +146,7 @@ Finally, we have a single task:
 
 This task uses the **tower_settings** module from the `awx.awx collection` to set the tower setting **CUSTOM_LOGIN_INFO** to a specific value.
 
-> **Note**: Because we are including the collections tag above you can reference the module as just `tower_settings` instead of `beeankah.awx.tower_settings`. However, remember that some versions of Ansible still contain the old built-in module with the same name. If the collections tag is not present and the `tower_settings` is not fully qualified with the collection name, Ansible may try to use the old version of the module which behaves slightly differently and requires the tower-cli library to function. Most of the new modules in the Collection do not have requirements on additional libraries. There are a couple of modules that are exceptions which we will talk about later.
+> **Note**: Because we are including the collections tag above you can reference the module as just `tower_settings` instead of `awx.awx.tower_settings`. However, remember that some versions of Ansible still contain the old built-in module with the same name. If the collections tag is not present and the `tower_settings` is not fully qualified with the collection name, Ansible may try to use the old version of the module which behaves slightly differently and requires the tower-cli library to function. Most of the new modules in the Collection do not have requirements on additional libraries. There are a couple of modules that are exceptions which we will talk about later.
 
 If you want to view the current value of your Ansible Tower’s `CUSTOM_LOGIN_INFO` you can do this in your web browser. In the Web UI go to `Settings => User Interface` and your current `CUSTOM_LOGIN_INFO` should be empty:
 
@@ -217,7 +217,7 @@ Starting collection install process
 Installing 'awx.awx:14.1.0' to '/home/student1/.ansible/collections/ansible_collections/awx/awx'
 ```
 
-We are telling `ansible-galaxy` that we want to perform an install of `awx.awx` and that it is a Collection, not a role that we want installed. Ansible Galaxy will then connect to `galaxy.ansible.com`, find and download our collection and install it into your `.ansible` folder for personal use. If there was another user on your control node, they would need to perform this step as well to get the Collection into their home account or we would need to configure a “shared” collection area and point Ansible to it. This can be done with the `COLLECTIONS_PATH` configuration setting [https://docs.ansible.com/ansible/latest/reference_appendices/config.html#collections-paths](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#collections-paths).  
+We are telling `ansible-galaxy` that we want to perform an install of `awx.awx` and that it is a Collection, not a role that we want installed. Ansible Galaxy will then connect to `galaxy.ansible.com`, find and download our collection and install it into your `.ansible` folder for personal use. If there was another user on your control node, they would need to perform this step as well to get the Collection into their home account or we would need to configure a “shared” collection area and point Ansible to it. This can be done with the `COLLECTIONS_PATH` configuration setting [https://docs.ansible.com/ansible/latest/reference_appendices/config.html#collections-paths](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#collections-paths).
 
 > **Note:** It is possible to install a Collection next to your playbook similar to how roles can be installed. However, this is not recommended for the `awx.awx collection`. This is because the `awx.awx` and corresponding `ansible.tower collections` come pre-shipped with AWX/Tower and the pre-shipped versions are the corresponding compatible versions. We will see in a moment what happens when you run a non-compatible version.
 
@@ -234,7 +234,7 @@ fatal: [localhost]: FAILED! => changed=false
   msg: 'There was an unknown error when trying to connect to https://127.0.0.1/api/v2/settings/all/: CertificateError hostname ''127.0.0.1'' doesn''t match ''student1.95c5.open.redhat.com'''
 
 PLAY RECAP ******************************************************************************
-localhost: ok=0 changed=0 unreachable=0 failed=1 skipped=0 rescued=0 ignored=0   
+localhost: ok=0 changed=0 unreachable=0 failed=1 skipped=0 rescued=0 ignored=0
 ```
 
 With the Collection installed, we no longer get a parsing error when our playbook tries to run the `awx.awx.tower_setting` module; instead we now get a connection error. Our new error message talks about an unknown error when trying to connect to `127.0.0.1`. This is because we did not provide any authentication information to the module on how to connect to Ansible Tower. By default, the modules try to talk to `127.0.0.1` (aka `localhost`) which in our case is a valid host but it has no username/password to authenticate with and, if you look closely at the error, it is reporting that the SSL certificate it got from `127.0.0.1` does not match the host name within the certificate. By default, the Ansible Tower modules will verify the SSL certificate before installing.
@@ -294,7 +294,7 @@ TASK [Set my login message] ****************************************************
 changed: [localhost]
 
 PLAY RECAP ****************************************************************************
-localhost: ok=1 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0   
+localhost: ok=1 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0
 ```
 
 
@@ -326,7 +326,7 @@ TASK [Set my login message] ****************************************************
 ok: [localhost]
 
 PLAY RECAP *****************************************************************************
-localhost: ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+localhost: ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
 If you manually change the login message through the UI and run the playbook again, your Ansible Tower configuration will go back to the state defined in the playbook.
