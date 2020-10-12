@@ -210,25 +210,3 @@ Just like the UI, the modules get some values from the API as `$encrypted$` (e.g
 
 You can now log into your corporately configured Ansible Tower UI and go to Jobs on the left hand menu and see that our job ran and that the returned ID from Ansible Tower matches the job ID within the database. Open this job and review the logs to see what it did. Once you read through the log, go through other screens within the Ansible Tower UI and see the many assets that have been created automatically since our last administrator configured Tower with Ansible and the collection.
 
-Also note: If you are using the `ansible.tower` collection, `wait: True` is not a valid module parameter. The `ansible.tower` collection has a separate module called `tower_job_wait` that we can use to wait for the launched job to complete. So instead of:
-
-```yml
-    - name: Launch configuration job
-      tower_job_launch:
-        name: "Configure Tower"
-        wait: True
-      register: job_launch_results
-```
-
-We would write following:
-
-```yml
-    - name: Launch configuration job
-      tower_job_launch:
-        name: "Configure Tower"
-      register: job_launch_results
-
-    - name: Wait for the configuration job to complete
-      tower_job_wait:
-        job_id: "{{ job_launch_results.id }}"
-```

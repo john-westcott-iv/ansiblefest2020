@@ -4,11 +4,11 @@
   connection: local
   gather_facts: False
   collections:
-    - beeankha.awx
+    - awx.awx
 
   tasks:
     - name: Set my login message
-      beeankha.awx.tower_settings:
+      awx.awx.tower_settings:
         name: "CUSTOM_LOGIN_INFO"
         value: "This is my own Tower instance"
 
