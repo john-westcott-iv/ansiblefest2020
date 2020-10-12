@@ -7,7 +7,7 @@
     - beeankha.awx
 
   tasks:
-    - name: Get the ID or Org 2
+    - name: Get the ID of Org 2
       set_fact:
         org2id: "{{ lookup('beeankha.awx.tower_api', 'organizations', query_params={'name': 'Org 2'}, expect_one=True, return_ids=True) }}"
 
