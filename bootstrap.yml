@@ -1,21 +1,21 @@
 ---
-- name: Bootstrap My Tower Instance
+- name: Bootstrap My Tower Instance For Corp Config
   hosts: localhost
   connection: local
   gather_facts: False
   collections:
     - beeankha.awx
   vars:
-    org_name: "Tower Bootstrap"
+    org_name: "Corporate Tower Config"
 
   tasks:
-    - name: Build Bootstrap Org
+    - name: Build Corporate Config Org
       tower_organization:
         name: "{{ org_name }}"
 
-    - name: Create a project
+    - name: Create a project tied to gihub configuration
       tower_project:
-        name: "Bootstrap Project"
+        name: "Corporate Config Project"
         organization: "{{ org_name }}"
         scm_type: 'git'
         scm_url: 'https://github.com/john-westcott-iv/ansiblefest2020'
@@ -43,19 +43,19 @@
           password: "{{ lookup('env', 'TOWER_PASSWORD') }}"
           username: "{{ lookup('env', 'TOWER_USERNAME') }}"
 
-    - name: Create a job template
+    - name: Create a job template for the configuration script
       tower_job_template:
-        name: "Bootstrap Tower"
-        project: "Bootstrap Project"
+        name: "Configure Tower"
+        project: "Corporate Config Project"
         inventory: "Tower Inventory"
         playbook: "configure_tower.yml"
         job_type: "run"
         credentials:
           - "My Tower Credential"
 
-    - name: Launch bootstrap job
+    - name: Launch configuration job
       tower_job_launch:
-        name: "Bootstrap Tower"
+        name: "Configure Tower"
         wait: True
       register: job_launch_results
 
