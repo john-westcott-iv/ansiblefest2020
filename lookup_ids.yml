@@ -4,19 +4,19 @@
   connection: local
   gather_facts: False
   collections:
-    - beeankha.awx
+    - awx.awx
 
   tasks:
     - name: Get the ID of Org 2
       set_fact:
-        org2id: "{{ lookup('beeankha.awx.tower_api', 'organizations', query_params={'name': 'Org 2'}, expect_one=True, return_ids=True) }}"
+        org2id: "{{ lookup('awx.awx.tower_api', 'organizations', query_params={'name': 'Org 2'}, expect_one=True, return_ids=True) }}"
 
     - debug:
         msg: "Org 2 ID is {{ org2id }}"
 
     - name: Get the ID of the Foo project in Org 2
       set_fact:
-        foo_id: "{{ lookup('beeankha.awx.tower_api', 'projects', query_params={'name': 'Foo', 'organization': org2id} , expect_one=True, return_ids=True) }}"
+        foo_id: "{{ lookup('awx.awx.tower_api', 'projects', query_params={'name': 'Foo', 'organization': org2id} , expect_one=True, return_ids=True) }}"
 
     - debug:
         msg: "ID is {{ foo_id }}"

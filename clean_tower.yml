@@ -4,14 +4,14 @@
   connection: local
   gather_facts: False
   collections:
-    - beeankha.awx
+    - awx.awx
 
   tasks:
     - name: Remove workflow job templates
       tower_workflow_job_template:
         state: absent
         name: "{{ item.id }}"
-      loop: "{{ lookup('beeankha.awx.tower_api', 'workflow_job_templates', return_all=True, wantlist=True) }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'workflow_job_templates', return_all=True, wantlist=True) }}"
       loop_control:
         label: "{{ item.name }}"
 
@@ -19,7 +19,7 @@
       tower_job_template:
         state: absent
         name: "{{ item.id }}"
-      loop: "{{ lookup('beeankha.awx.tower_api', 'job_templates', return_all=True, wantlist=True) }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'job_templates', return_all=True, wantlist=True) }}"
       loop_control:
         label: "{{ item.name }}"
 
@@ -27,7 +27,7 @@
       tower_project:
         state: absent
         name: "{{ item.id }}"
-      loop: "{{ lookup('beeankha.awx.tower_api', 'projects', return_all=True, wantlist=True) }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'projects', return_all=True, wantlist=True) }}"
       loop_control:
         label: "{{ item.name }}"
 
@@ -36,7 +36,7 @@
         state: absent
         name: "{{ item.id }}"
         organization: "{{ item.organization }}"
-      loop: "{{ lookup('beeankha.awx.tower_api', 'inventories', return_all=True, wantlist=True) }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'inventories', return_all=True, wantlist=True) }}"
       loop_control:
         label: "{{ item.name }}"
 
@@ -45,7 +45,7 @@
         state: absent
         name: "{{ item.id }}"
         credential_type: "{{ item.credential_type }}"
-      loop: "{{ lookup('beeankha.awx.tower_api', 'credentials', return_all=True, wantlist=True) }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'credentials', return_all=True, wantlist=True) }}"
       loop_control:
         label: "{{ item.name }}"
 
@@ -53,7 +53,7 @@
       tower_organization:
         state: absent
         name: "{{ item.id }}"
-      loop: "{{ lookup('beeankha.awx.tower_api', 'organizations', return_all=True, wantlist=True) }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'organizations', return_all=True, wantlist=True) }}"
       loop_control:
         label: "{{ item.name }}"
 
@@ -61,7 +61,7 @@
       tower_user:
         state: absent
         username: "{{ item.id }}"
-      loop: "{{ lookup('beeankha.awx.tower_api', 'users', return_all=True, wantlist=True) }}"
+      loop: "{{ lookup('awx.awx.tower_api', 'users', return_all=True, wantlist=True) }}"
       loop_control:
         label: "{{ item.username }}"
       when: "item.username != 'admin'"
