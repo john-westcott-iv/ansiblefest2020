@@ -19,21 +19,21 @@ Now let’s see what happens when we try to use a Foo project in a playbook. Wri
 
 To do this we will use the `tower_role` module inside a playbook called `add_snafu_to_project.yml` with the following contents:
 
-```
-    ---
-    - name: Add snafu to Foo project
-      hosts: localhost
-      connection: local
-      gather_facts: False
-      collections:
-        - awx.awx
+```yml
+---
+- name: Add snafu to Foo project
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  collections:
+    - awx.awx
 
-      tasks:
-        - name: Add snafu to Foo project use RBAC
-          tower_role:
-            user: "snafu"
-            role: "use"
-            project: "Foo"
+  tasks:
+    - name: Add snafu to Foo project use RBAC
+      tower_role:
+        user: "snafu"
+        role: "use"
+        project: "Foo"
 ```
 
 When you execute this playbook you are logging into the Ansible Tower server as the admin user who is a superuser and can see everything with the Ansible Tower instance, including both Foo projects:
@@ -83,20 +83,20 @@ In addition to these default file locations, all modules support a setting to sp
 In order to get around our environment issue, we are going to create a file called `org1_tower_cli.cfg` in the current directory with the following values:
 
 ```
-    [general]
-    username = org1admin
-    password = org1admin
+[general]
+username = org1admin
+password = org1admin
 ```
 
 Now that we have that in place let’s modify our existing `add_snafu_to_project.yml` file to add the loading of the file to our task:
 
-```
-        - name: Add snafu to Foo project use RBAC
-          tower_role:
-            user: "snafu"
-            role: "use"
-            project: "Foo"
-            tower_config_file: "org1_tower_cli.cfg"
+```yml
+    - name: Add snafu to Foo project use RBAC
+      tower_role:
+        user: "snafu"
+        role: "use"
+        project: "Foo"
+        tower_config_file: "org1_tower_cli.cfg"
 ```
 
 What would you expect to happen when we run this?
@@ -136,7 +136,7 @@ TASK [Add snafu to Foo project use RBAC] ***************************************
 changed: [localhost]
 
 PLAY RECAP *****************************************************************************
-localhost: ok=1 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0   
+localhost: ok=1 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0
 ```
 
 In addition to the play now working, note the additional warning that comes out. We still have the `TOWER_HOST` environment variable set so we get a warning that some direct parameters were set in addition to the `tower_config` file. The collection recommends that we use one or the other but not both. \
@@ -154,29 +154,29 @@ Another option is to use an ID instead of a name. The modules will accept IDs an
 
 Let’s write a playbook called `lookup_ids.yml` with the following content:
 
-```
-    ---
-    - name: Lookup the org id
-      hosts: localhost
-      connection: local
-      gather_facts: False
-      collections:
-        - awx.awx
+```yml
+---
+- name: Lookup the org id
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  collections:
+    - awx.awx
 
-      tasks:
-        - name: Get the ID of Org 2
-          set_fact:
-            org2id: "{{ lookup('awx.awx.tower_api', 'organizations', query_params={'name': 'Org 2'}, expect_one=True, return_ids=True) }}"
+  tasks:
+    - name: Get the ID of Org 2
+      set_fact:
+        org2id: "{{ lookup('awx.awx.tower_api', 'organizations', query_params={'name': 'Org 2'}, expect_one=True, return_ids=True) }}"
 
-        - debug:
-            msg: "Org 2 ID is {{ org2id }}"
+    - debug:
+        msg: "Org 2 ID is {{ org2id }}"
 
-        - name: Get the ID of the Foo project in Org 2
-          set_fact:
-            foo_id: "{{ lookup('awx.awx.tower_api', 'projects', query_params={'name': 'Foo', 'organization': org2id} , expect_one=True, return_ids=True) }}"
+    - name: Get the ID of the Foo project in Org 2
+      set_fact:
+        foo_id: "{{ lookup('awx.awx.tower_api', 'projects', query_params={'name': 'Foo', 'organization': org2id} , expect_one=True, return_ids=True) }}"
 
-        - debug:
-            msg: "ID is {{ foo_id }}"
+    - debug:
+        msg: "ID is {{ foo_id }}"
 ```
 
 This playbook starts by looking up the ID for Org 2 and then uses that ID to look up a project named Foo tied to the organization to the ID we found for Org 2. When we run this, we get the following output:
@@ -204,7 +204,7 @@ ok: [localhost] => {
 }
 
 PLAY RECAP *****************************************************************************
-localhost: ok=4 changed=0 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0   
+localhost: ok=4 changed=0 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0
 ```
 
 > **Note**: Your IDs will be different than the ones above.
@@ -219,25 +219,25 @@ Note that the ID is in the Web UI URL (**bolded** in the example above); this is
 
 Finally, we can circle back and update our `add_snafu_to_project.yml` file to reference the ID of the Foo project by ID instead of by name:
 
-```
-    ---
-    - name: Add snafu to Foo project
-      hosts: localhost
-      connection: local
-      gather_facts: False
-      collections:
-        - awx.awx
+```yml
+---
+- name: Add snafu to Foo project
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  collections:
+    - awx.awx
 
-      tasks:
-        - name: Get the ID of Org 2
-          set_fact:
-            org2id: "{{ lookup('awx.awx.tower_api', 'organizations', query_params={'name': 'Org 2'}, expect_one=True, return_ids=True) }}"
+  tasks:
+    - name: Get the ID of Org 2
+      set_fact:
+        org2id: "{{ lookup('awx.awx.tower_api', 'organizations', query_params={'name': 'Org 2'}, expect_one=True, return_ids=True) }}"
 
-        - name: Add snafu to Foo project use RBAC
-          tower_role:
-            user: "snafu"
-            role: "use"
-            project: "{{ lookup('awx.awx.tower_api', 'projects', query_params={'name': 'Foo', 'organization': org2id} , expect_one=True, return_ids=True) }}"
+    - name: Add snafu to Foo project use RBAC
+      tower_role:
+        user: "snafu"
+        role: "use"
+        project: "{{ lookup('awx.awx.tower_api', 'projects', query_params={'name': 'Foo', 'organization': org2id} , expect_one=True, return_ids=True) }}"
 ```
 
 The results will be:
@@ -256,7 +256,7 @@ TASK [Add snafu to Foo project use RBAC] ***************************************
 changed: [localhost]
 
 PLAY RECAP *****************************************************************************
-localhost: ok=2 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0   
+localhost: ok=2 changed=1 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0
 ```
 
 We have now successfully added the user to the correct project (via IDs) even though our admin user can see both “Foo” projects.

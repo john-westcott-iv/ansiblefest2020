@@ -55,20 +55,20 @@ Create a new branch called production:
 
 We will now create a mock playbook called `demo.yml`:
 
-```
-    ---
-    - name: This is our demo playbook
-      hosts: localhost
-      connection: local
-      gather_facts: False
-      tasks:
-        - debug:
-            msg: "Running the {{ twr_env | default('Unknown') }} job"
+```yml
+---
+- name: This is our demo playbook
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - debug:
+        msg: "Running the {{ twr_env | default('Unknown') }} job"
 
-        - debug:
-            msg: "This is the end of my playbook"
-          tags:
-            - debug_messages
+    - debug:
+        msg: "This is the end of my playbook"
+      tags:
+        - debug_messages
 ```
 
 And commit this new file into the production branch:
