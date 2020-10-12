@@ -2,7 +2,7 @@
 
 If you find an issue with the Collections, we want to know! There are two paths to get help depending on which Collection you are using.
 
-For `ansible.tower`, this collection is fully supported. To report an issue you can log into access.redhat.com and open a support case.
+For `ansible.tower`, this collection is fully supported. To report an issue you can log into [https://access.redhat.com](https://access.redhat.com) and open a support case.
 
 For `awx.awx`, this collection is community supported. Issues related to this collection can be opened in the GitHub repo for AWX itself. To report an issue, go to [https://github.com/ansible/awx](https://github.com/ansible/awx) and then click on the Issues tab:
 
