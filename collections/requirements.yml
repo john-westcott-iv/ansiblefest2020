@@ -1,4 +1,2 @@
 collections:
   - awx.awx
-  #- name: beeankha.awx
-  #  version: "==0.0.1-devel"
